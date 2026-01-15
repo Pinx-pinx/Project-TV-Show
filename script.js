@@ -4,6 +4,9 @@ const episodeSelect = document.getElementById("episodeSelect");
 const showSelect = document.getElementById("showSelect");
 const episodeCount = document.getElementById("episodeCount");
 const loadingSpinner = document.getElementById("loadingSpinner");
+const showsContainer = document.getElementById("showsContainer");
+const backToShowsBtn = document.getElementById("backToShows");
+const showSearchInput = document.getElementById("showSearch");
 
 /*  Global State & Cache */
 
@@ -37,10 +40,12 @@ async function fetchShows() {
     );
 
     populateShowSelect(allShows);
+    displayShows(allShows);
+    showSearchInput.style.display = "block";
+
     showLoading(false);
   } catch (error) {
-    root.innerHTML =
-      "<p>Error loading shows. Please refresh the page.</p>";
+    root.innerHTML = "<p>Error loading shows. Please refresh the page.</p>";
     showLoading(false);
   }
 }
@@ -73,8 +78,7 @@ async function fetchEpisodesForShow(showId) {
     setupEpisodeSelect(allEpisodes);
     showLoading(false);
   } catch (error) {
-    root.innerHTML =
-      "<p>Error loading episodes. Please try another show.</p>";
+    root.innerHTML = "<p>Error loading episodes. Please try another show.</p>";
     showLoading(false);
   }
 }
@@ -96,8 +100,7 @@ showSelect.addEventListener("change", () => {
 
   // Reset UI
   searchInput.value = "";
-  episodeSelect.innerHTML =
-    '<option value="">Jump to episode...</option>';
+  episodeSelect.innerHTML = '<option value="">Jump to episode...</option>';
   root.innerHTML = "";
 
   fetchEpisodesForShow(showId);
@@ -116,10 +119,7 @@ function displayEpisodes(episodes) {
 }
 
 function createEpisodeCard(episode) {
-  const episodeCode = formatEpisodeCode(
-    episode.season,
-    episode.number
-  );
+  const episodeCode = formatEpisodeCode(episode.season, episode.number);
 
   const episodeCard = document.createElement("section");
   episodeCard.className = "episode";
@@ -136,6 +136,47 @@ function createEpisodeCard(episode) {
   `;
 
   return episodeCard;
+}
+function displayShows(shows) {
+  showsContainer.innerHTML = "";
+
+  shows.forEach((show) => {
+    const card = document.createElement("div");
+    card.className = "show-card";
+
+    card.innerHTML = `
+      <h3>${show.name}</h3>
+      <img src="${show.image?.medium || ""}">
+      <div class="show-summary">
+       ${show.summary || "<p>No summary available.</p>"}
+      </div>
+
+      <p><b>Genres:</b> ${show.genres.join(", ")}</p>
+      <p><b>Status:</b> ${show.status}</p>
+      <p><b>Rating:</b> ${show.rating.average}</p>
+      <p><b>Runtime:</b> ${show.runtime} min</p>
+    `;
+
+    card.addEventListener("click", () => {
+      showEpisodesView();
+      fetchEpisodesForShow(show.id);
+    });
+
+    showsContainer.appendChild(card);
+  });
+}
+
+function showEpisodesView() {
+  showsContainer.style.display = "none";
+  showSearchInput.style.display = "none";
+  backToShowsBtn.style.display = "block";
+}
+
+function showShowsView() {
+  showsContainer.style.display = "grid";
+  showSearchInput.style.display = "block";
+  backToShowsBtn.style.display = "none";
+  root.innerHTML = "";
 }
 
 /*  Search */
@@ -154,12 +195,23 @@ function setupSearch() {
     displayEpisodes(filtered);
   });
 }
+showSearchInput.addEventListener("input", () => {
+  const term = showSearchInput.value.toLowerCase();
+
+  const filtered = allShows.filter(
+    (show) =>
+      show.name.toLowerCase().includes(term) ||
+      show.genres.join(" ").toLowerCase().includes(term) ||
+      (show.summary && show.summary.toLowerCase().includes(term))
+  );
+
+  displayShows(filtered);
+});
 
 /*  Episode Selector */
 
 function setupEpisodeSelect(episodes) {
-  episodeSelect.innerHTML =
-    '<option value="">Jump to episode...</option>';
+  episodeSelect.innerHTML = '<option value="">Jump to episode...</option>';
 
   episodes.forEach((episode) => {
     const code = formatEpisodeCode(episode.season, episode.number);
@@ -180,6 +232,7 @@ episodeSelect.addEventListener("change", () => {
     behavior: "smooth",
   });
 });
+backToShowsBtn.addEventListener("click", showShowsView);
 
 /* Helpers */
 

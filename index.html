@@ -9,7 +9,7 @@
   </head>
 
   <body>
-    <header>
+    <header class="top-bar">
       <!-- NEW: Show selector -->
       <select id="showSelect">
         <option value="">Select a show...</option>
@@ -27,6 +27,16 @@
     <div id="loadingSpinner" style="display: none">
       <p>Loading data...</p>
     </div>
+    <button id="backToShows" style="display: none">← Back to shows</button>
+
+    <input
+      type="text"
+      id="showSearch"
+      placeholder="Search shows..."
+      style="display: none"
+    />
+
+    <div id="showsContainer"></div>
 
     <div id="root"></div>
 

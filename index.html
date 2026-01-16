@@ -9,36 +9,61 @@
   </head>
 
   <body>
-    <header class="top-bar">
-      <!-- NEW: Show selector -->
+    <header>
+      <!-- Show selector -->
       <select id="showSelect">
         <option value="">Select a show...</option>
       </select>
 
+      <!-- Search episodes -->
       <input type="text" id="searchInput" placeholder="Search episodes..." />
 
+      <!-- Episode selector -->
       <select id="episodeSelect">
         <option value="">Jump to episode...</option>
       </select>
 
+      <!-- Sort shows -->
+      <select id="sortSelect">
+        <option value="">Sort shows...</option>
+        <option value="name">A-Z</option>
+        <option value="rating">Highest Rating</option>
+      </select>
+
+      <!-- Episode count -->
       <p id="episodeCount"></p>
     </header>
 
-    <div id="loadingSpinner" style="display: none">
-      <p>Loading data...</p>
-    </div>
-    <button id="backToShows" style="display: none">← Back to shows</button>
-
+    <!-- Search shows -->
     <input
       type="text"
       id="showSearch"
       placeholder="Search shows..."
-      style="display: none"
+      style="
+        display: none;
+        margin: 10px 20px;
+        width: calc(100% - 40px);
+        padding: 8px;
+        font-size: 14px;
+      "
     />
 
+    <!-- Shows container -->
     <div id="showsContainer"></div>
 
+    <!-- Episodes container -->
     <div id="root"></div>
+
+    <!-- Back button -->
+    <button id="backToShows" style="display: none; margin: 16px">
+      Back to Shows
+    </button>
+
+    <!---->
+    Loading Spinner -->
+    <div id="loadingSpinner" style="display: none">
+      <p>Loading data...</p>
+    </div>
 
     <script src="script.js"></script>
   </body>
